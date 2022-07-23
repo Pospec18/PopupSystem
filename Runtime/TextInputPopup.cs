@@ -30,6 +30,8 @@ namespace Pospec.Popup
                 Confirm(inputField.text);
         }
 
+        #region Use Popup
+
         /// <summary>
         /// Show and set Popup
         /// </summary>
@@ -38,12 +40,14 @@ namespace Pospec.Popup
         /// <param name="onExitAction">Action on exiting Popup using Exit Button</param>
         /// <param name="onStartEditAction">Action on Start of text edit</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
-        public void Use(string text, Action<string> onConfirmAction, Action onExitAction, Action onStartEditAction, int maxInputChars = -1)
+        /// <param name="image">Image to be shown in popup</param>
+        /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
+        public void Use(string text, Action<string> onConfirmAction, Action onExitAction, Action onStartEditAction, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
             startEdit = new PopupAction(onStartEditAction, null);
             exit = new PopupAction(onExitAction, null);
-            SetGameObject(text, maxInputChars);
+            SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
         /// <summary>
@@ -55,12 +59,14 @@ namespace Pospec.Popup
         /// <param name="onExitValue">Value of parameter of onExitAction</param>
         /// <param name="onStartEditAction">Action on Start of text edit</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
-        public void Use<T>(string text, Action<string> onConfirmAction, Action<T> onExitAction, T onExitValue, Action onStartEditAction, int maxInputChars = -1)
+        /// <param name="image">Image to be shown in popup</param>
+        /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
+        public void Use<T>(string text, Action<string> onConfirmAction, Action<T> onExitAction, T onExitValue, Action onStartEditAction, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
             startEdit = new PopupAction(onStartEditAction, null);
             exit = new PopupAction<T>(onExitAction, onExitValue, null);
-            SetGameObject(text, maxInputChars);
+            SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
         /// <summary>
@@ -72,12 +78,14 @@ namespace Pospec.Popup
         /// <param name="onStartEditAction">Action on Start of text edit</param>
         /// <param name="onStartValue">Value of parameter of onStartEditAction</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
-        public void Use<T>(string text, Action<string> onConfirmAction, Action onExitAction, Action<T> onStartEditAction, T onStartValue, int maxInputChars = -1)
+        /// <param name="image">Image to be shown in popup</param>
+        /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
+        public void Use<T>(string text, Action<string> onConfirmAction, Action onExitAction, Action<T> onStartEditAction, T onStartValue, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
             startEdit = new PopupAction<T>(onStartEditAction, onStartValue, null);
             exit = new PopupAction(onExitAction, null);
-            SetGameObject(text, maxInputChars);
+            SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
         /// <summary>
@@ -90,19 +98,21 @@ namespace Pospec.Popup
         /// <param name="onStartEditAction">Action on Start of text edit</param>
         /// <param name="onStartValue">Value of parameter of onStartEditAction</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
-        public void Use<T, Q>(string text, Action<string> onConfirmAction, Action<T> onExitAction, T onExitValue, Action<Q> onStartEditAction, Q onStartValue, int maxInputChars = -1)
+        /// <param name="image">Image to be shown in popup</param>
+        /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
+        public void Use<T, Q>(string text, Action<string> onConfirmAction, Action<T> onExitAction, T onExitValue, Action<Q> onStartEditAction, Q onStartValue, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
             startEdit = new PopupAction<Q>(onStartEditAction, onStartValue, null);
             exit = new PopupAction<T>(onExitAction, onExitValue, null);
-            gameObject.SetActive(true);
-            SetGameObject(text, maxInputChars);
+            SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
-        private void SetGameObject(string text, int maxInputChars)
+        #endregion
+
+        private void SetGameObject(string text, Sprite image, bool blockRaycasts, int maxInputChars)
         {
-            gameObject.SetActive(true);
-            textField.text = text;
+            SetupPopup(text, image, blockRaycasts);
             inputField.characterLimit = maxInputChars;
         }
 
@@ -120,8 +130,9 @@ namespace Pospec.Popup
             gameObject.SetActive(false);
         }
 
-        private void ResetPopup()
+        protected override void ResetPopup()
         {
+            base.ResetPopup();
             action = null;
             startEdit = null;
             exit = null;
