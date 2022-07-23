@@ -10,12 +10,12 @@ namespace Pospec.Popup
     /// </summary>
     public class TextInputPopup : BasePopup
     {
-        public TMP_InputField inputField;
-        public Button exitButton;
-        public Button confirmButton;
-        Action<string> action;
-        IPopupAction startEdit;
-        IPopupAction exit;
+        [SerializeField] private TMP_InputField inputField;
+        [SerializeField] private Button exitButton;
+        [SerializeField] private Button confirmButton;
+        private Action<string> action;
+        private IPopupAction startEdit;
+        private IPopupAction exit;
 
         private void Start()
         {
@@ -55,17 +55,16 @@ namespace Pospec.Popup
         /// </summary>
         /// <param name="text">Popup text</param>
         /// <param name="onConfirmAction">Action on End of text edit</param>
-        /// <param name="onExitAction">Generic Action on exiting Popup using Exit Button</param>
-        /// <param name="onExitValue">Value of parameter of onExitAction</param>
+        /// <param name="onExit">Generic Action on exiting Popup using Exit Button (ingore name)</param>
         /// <param name="onStartEditAction">Action on Start of text edit</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
-        public void Use<T>(string text, Action<string> onConfirmAction, Action<T> onExitAction, T onExitValue, Action onStartEditAction, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
+        public void Use<T>(string text, Action<string> onConfirmAction, PopupOption<T> onExit, Action onStartEditAction, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
             startEdit = new PopupAction(onStartEditAction, null);
-            exit = new PopupAction<T>(onExitAction, onExitValue, null);
+            exit = new PopupAction<T>(onExit.action, onExit.value, null);
             SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
@@ -74,16 +73,15 @@ namespace Pospec.Popup
         /// </summary>
         /// <param name="text">Popup text</param>
         /// <param name="onConfirmAction">Action on End of text edit</param>
-        /// <param name="onExitAction">Generic Action on exiting Popup using Exit Button</param>
-        /// <param name="onStartEditAction">Action on Start of text edit</param>
-        /// <param name="onStartValue">Value of parameter of onStartEditAction</param>
+        /// <param name="onExitAction">Action on exiting Popup using Exit Button</param>
+        /// <param name="onStartEdit">Generic Action on Start of text edit (ignore name)</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
-        public void Use<T>(string text, Action<string> onConfirmAction, Action onExitAction, Action<T> onStartEditAction, T onStartValue, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
+        public void Use<T>(string text, Action<string> onConfirmAction, Action onExitAction, PopupOption<T> onStartEdit, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
-            startEdit = new PopupAction<T>(onStartEditAction, onStartValue, null);
+            startEdit = new PopupAction<T>(onStartEdit.action, onStartEdit.value, null);
             exit = new PopupAction(onExitAction, null);
             SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
@@ -93,18 +91,16 @@ namespace Pospec.Popup
         /// </summary>
         /// <param name="text">Popup text</param>
         /// <param name="onConfirmAction">Action on End of text edit</param>
-        /// <param name="onExitAction">Generic Action on exiting Popup using Exit Button</param>
-        /// <param name="onExitValue">Value of parameter of onExitAction</param>
-        /// <param name="onStartEditAction">Action on Start of text edit</param>
-        /// <param name="onStartValue">Value of parameter of onStartEditAction</param>
+        /// <param name="onExit">Generic Action on exiting Popup using Exit Button (ingore name)</param>
+        /// <param name="onStartEdit">Generic Action on Start of text edit (ignore name)</param>
         /// <param name="maxInputChars">limit of input characters (negative values for no limit)</param>
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
-        public void Use<T, Q>(string text, Action<string> onConfirmAction, Action<T> onExitAction, T onExitValue, Action<Q> onStartEditAction, Q onStartValue, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
+        public void Use<T, Q>(string text, Action<string> onConfirmAction, PopupOption<T> onExit, PopupOption<Q> onStartEdit, int maxInputChars = -1, Sprite image = null, bool blockRaycasts = true)
         {
             action = onConfirmAction;
-            startEdit = new PopupAction<Q>(onStartEditAction, onStartValue, null);
-            exit = new PopupAction<T>(onExitAction, onExitValue, null);
+            startEdit = new PopupAction<Q>(onStartEdit.action, onStartEdit.value, null);
+            exit = new PopupAction<T>(onExit.action, onExit.value, null);
             SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
@@ -119,15 +115,13 @@ namespace Pospec.Popup
         private void Confirm(string text)
         {
             action?.Invoke(text);
-            ResetPopup();
-            gameObject.SetActive(false);
+            Close();
         }
 
         private void ExitPopup()
         {
             exit.OnClick();
-            ResetPopup();
-            gameObject.SetActive(false);
+            Close();
         }
 
         protected override void ResetPopup()

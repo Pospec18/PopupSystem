@@ -10,7 +10,7 @@ namespace Pospec.Popup
     /// </summary>
     public abstract class BasePopup : MonoBehaviour
     {
-        public TextMeshProUGUI textField;
+        [SerializeField] private TextMeshProUGUI textField;
         [SerializeField] private Image popupIMG;
         [SerializeField] private Image blockRaycastsIMG;
 
@@ -28,14 +28,15 @@ namespace Pospec.Popup
                 _blockRaycasts = value;
             }
         }
+
         public virtual void Close()
         {
+            ResetPopup();
             gameObject.SetActive(false);
         }
 
         protected void SetupPopup(string text, Sprite image, bool blockRaycasts)
         {
-            ResetPopup();
             gameObject.SetActive(true);
             textField.text = text;
             BlockRaycasts = blockRaycasts;

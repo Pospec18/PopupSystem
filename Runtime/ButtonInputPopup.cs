@@ -12,7 +12,6 @@ namespace Pospec.Popup
         [SerializeField] private PopupButton buttonPref;
         [SerializeField] private Transform buttonsPanel;
 
-
         [SerializeField] private List<IPopupAction> popupActions = new List<IPopupAction>();
         private List<KeyCode> confirmKeyCodes = new List<KeyCode>();
 
@@ -123,19 +122,19 @@ namespace Pospec.Popup
 
         #endregion
 
-        void Generate<T>(PopupOption<T> option, int i)
+        private void Generate<T>(PopupOption<T> option, int i)
         {
             GameObject button = GenerateButton(option, i);
             popupActions.Add(new PopupAction<T>(option.action, option.value, button));
         }
 
-        void Generate(PopupOption option, int i)
+        private void Generate(PopupOption option, int i)
         {
             GameObject button = GenerateButton(option, i);
             popupActions.Add(new PopupAction(option.action, button));
         }
 
-        GameObject GenerateButton(IPopupOption option, int i)
+        private GameObject GenerateButton(IPopupOption option, int i)
         {
             PopupButton button = Instantiate(buttonPref, buttonsPanel);
             button.textField.text = option.Name;
