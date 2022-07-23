@@ -9,6 +9,14 @@ namespace Pospec.Popup
     public interface IPopupOption
     {
         /// <summary>
+        /// Is this PopupOption Generic
+        /// </summary>
+        bool IsGeneric { get; }
+    }
+
+    public interface IPopupButtonOption : IPopupOption
+    {
+        /// <summary>
         /// Text displayed at popup button
         /// </summary>
         string Name { get; set; }
@@ -16,10 +24,6 @@ namespace Pospec.Popup
         /// Color of text of popup button
         /// </summary>
         Color? Col { get; set; }
-        /// <summary>
-        /// Is this PopupOption Generic
-        /// </summary>
-        bool IsGeneric { get; }
     }
 
     /// <summary>
@@ -27,24 +31,13 @@ namespace Pospec.Popup
     /// </summary>
     public class PopupOption : IPopupOption
     {
-        public string Name { get; set; }
-        public Color? Col { get; set; }
         public bool IsGeneric => false;
 
         public Action action;
 
-        public PopupOption(string _name, Action _action)
+        public PopupOption(Action _action)
         {
-            Name = _name;
             action = _action;
-            Col = null;
-        }
-
-        public PopupOption(string _name, Action _action, Color _color)
-        {
-            Name = _name;
-            action = _action;
-            Col = _color;
         }
     }
 
@@ -54,26 +47,51 @@ namespace Pospec.Popup
     /// <typeparam name="T"></typeparam>
     public class PopupOption<T> : IPopupOption
     {
-        public string Name { get; set; }
-        public Color? Col { get; set; }
         public bool IsGeneric => true;
 
         public Action<T> action;
         public T value;
 
-        public PopupOption(string _name, Action<T> _action, T _value)
+        public PopupOption(Action<T> _action, T _value)
         {
-            Name = _name;
             action = _action;
             value = _value;
+        }
+    }
+
+    public class PopupButtonOption : PopupOption, IPopupButtonOption
+    {
+        public string Name { get; set; }
+        public Color? Col { get; set; } = null;
+
+
+        public PopupButtonOption(string _name, Action _action) : base(_action)
+        {
+            Name = _name;
             Col = null;
         }
 
-        public PopupOption(string _name, Action<T> _action, T _value, Color _color)
+        public PopupButtonOption(string _name, Action _action, Color _color) : base(_action)
         {
             Name = _name;
-            action = _action;
-            value = _value;
+            Col = _color;
+        }
+    }
+
+    public class PopupButtonOption<T> : PopupOption<T>, IPopupButtonOption
+    {
+        public string Name { get; set; }
+        public Color? Col { get; set; } = null;
+
+        public PopupButtonOption(string _name, Action<T> _action, T _value) : base(_action, _value)
+        {
+            Name = _name;
+            Col = null;
+        }
+
+        public PopupButtonOption(string _name, Action<T> _action, T _value, Color _color) : base(_action, _value)
+        {
+            Name = _name;
             Col = _color;
         }
     }

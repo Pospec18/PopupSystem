@@ -22,7 +22,7 @@ namespace Pospec.Popup
         /// </summary>
         /// <param name="text">Popup text</param>
         /// <param name="options">Options for player to choose</param>
-        public void Use(string text, params PopupOption[] options)
+        public void Use(string text, params PopupButtonOption[] options)
         {
             Use(text, null, BlockRaycasts, options);
         }
@@ -33,7 +33,7 @@ namespace Pospec.Popup
         /// <param name="text">Popup text</param>
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="options">Options for player to choose</param>
-        public void Use(string text, Sprite image, params PopupOption[] options)
+        public void Use(string text, Sprite image, params PopupButtonOption[] options)
         {
             Use(text, image, BlockRaycasts, options);
         }
@@ -44,7 +44,7 @@ namespace Pospec.Popup
         /// <param name="text">Popup text</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
         /// <param name="options">Options for player to choose</param>
-        public void Use(string text, bool blockRaycasts, params PopupOption[] options)
+        public void Use(string text, bool blockRaycasts, params PopupButtonOption[] options)
         {
             Use(text, null, blockRaycasts, options);
         }
@@ -56,7 +56,7 @@ namespace Pospec.Popup
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
         /// <param name="options">Options for player to choose</param>
-        public void Use(string text, Sprite image, bool blockRaycasts, params PopupOption[] options)
+        public void Use(string text, Sprite image, bool blockRaycasts, params PopupButtonOption[] options)
         {
             SetupPopup(text, image, blockRaycasts);
             for (int i = 0; i < options.Length; i++)
@@ -71,7 +71,7 @@ namespace Pospec.Popup
         /// <typeparam name="T">Parametr Type of PopupOption</typeparam>
         /// <param name="text">Popup text</param>
         /// <param name="options">Options for player to choose (can be of one generic type)</param>
-        public void Use<T>(string text, params IPopupOption[] options)
+        public void Use<T>(string text, params IPopupButtonOption[] options)
         {
             Use<T>(text, null, BlockRaycasts, options);
         }
@@ -83,7 +83,7 @@ namespace Pospec.Popup
         /// <param name="text">Popup text</param>
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="options">Options for player to choose (can be of one generic type)</param>
-        public void Use<T>(string text, Sprite image, params IPopupOption[] options)
+        public void Use<T>(string text, Sprite image, params IPopupButtonOption[] options)
         {
             Use<T>(text, image, BlockRaycasts, options);
         }
@@ -95,7 +95,7 @@ namespace Pospec.Popup
         /// <param name="text">Popup text</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
         /// <param name="options">Options for player to choose (can be of one generic type)</param>
-        public void Use<T>(string text, bool blockRaycasts, params IPopupOption[] options)
+        public void Use<T>(string text, bool blockRaycasts, params IPopupButtonOption[] options)
         {
             Use<T>(text, null, blockRaycasts, options);
         }
@@ -108,33 +108,33 @@ namespace Pospec.Popup
         /// <param name="image">Image to be shown in popup</param>
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
         /// <param name="options">Options for player to choose (can be of one generic type)</param>
-        public void Use<T>(string text, Sprite image, bool blockRaycasts, params IPopupOption[] options)
+        public void Use<T>(string text, Sprite image, bool blockRaycasts, params IPopupButtonOption[] options)
         {
             SetupPopup(text, image, blockRaycasts);
             for (int i = 0; i < options.Length; i++)
             {
                 if (options[i].IsGeneric)
-                    Generate((PopupOption<T>)options[i], i);
+                    Generate((PopupButtonOption<T>)options[i], i);
                 else
-                    Generate((PopupOption)options[i], i);
+                    Generate((PopupButtonOption)options[i], i);
             }
         }
 
         #endregion
 
-        private void Generate<T>(PopupOption<T> option, int i)
+        private void Generate<T>(PopupButtonOption<T> option, int i)
         {
             GameObject button = GenerateButton(option, i);
-            popupActions.Add(new PopupAction<T>(option.action, option.value, button));
+            popupActions.Add(new PopupAction<T>(option, button));
         }
 
-        private void Generate(PopupOption option, int i)
+        private void Generate(PopupButtonOption option, int i)
         {
             GameObject button = GenerateButton(option, i);
-            popupActions.Add(new PopupAction(option.action, button));
+            popupActions.Add(new PopupAction(option, button));
         }
 
-        private GameObject GenerateButton(IPopupOption option, int i)
+        private GameObject GenerateButton(IPopupButtonOption option, int i)
         {
             PopupButton button = Instantiate(buttonPref, buttonsPanel);
             button.textField.text = option.Name;
@@ -170,8 +170,8 @@ namespace Pospec.Popup
         /// <param name="index">Index in popupActions list</param>
         private void OnButtonClick(int index)
         {
-            Close();
             popupActions[index].OnClick();
+            Close();
         }
     }    
 }

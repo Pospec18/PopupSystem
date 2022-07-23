@@ -75,6 +75,16 @@ namespace Pospec.Popup
                 Button = _button;
             }
 
+            public PopupAction(PopupOption _option, GameObject _button)
+            {
+                if (_option == null)
+                    action = null;
+                else
+                    action = _option.action;
+
+                Button = _button;
+            }
+
             public void OnClick()
             {
                 action?.Invoke();
@@ -91,6 +101,22 @@ namespace Pospec.Popup
             {
                 action = _action;
                 value = _value;
+                Button = _button;
+            }
+
+            public PopupAction(PopupOption<T> _option, GameObject _button)
+            {
+                if (_option == null)
+                {
+                    action = null;
+                    value = default(T);
+                }
+                else
+                {
+                    action = _option.action;
+                    value = _option.value;
+                }
+
                 Button = _button;
             }
 
