@@ -14,7 +14,7 @@ namespace Pospec.Popup
         [SerializeField] private Image popupIMG;
         [SerializeField] private Image blockRaycastsIMG;
 
-        private bool _blockRaycasts;
+        private bool _blockRaycasts = true;
         public bool BlockRaycasts
         {
             get
