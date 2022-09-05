@@ -14,13 +14,13 @@ namespace Pospec.Popup
         [SerializeField] private Button exitButton;
         [SerializeField] private Button confirmButton;
         private Action<string> action;
-        private PopupAction startEdit;
-        private PopupAction exit;
+        private Action startEdit;
+        private Action exit;
 
         private void Start()
         {
             confirmButton?.onClick.AddListener(delegate { Confirm(inputField.text); });
-            inputField.onSelect.AddListener(delegate { startEdit.OnClick(); });
+            inputField.onSelect.AddListener(delegate { startEdit?.Invoke(); });
             exitButton.onClick.AddListener(ExitPopup);
         }
 
@@ -85,8 +85,8 @@ namespace Pospec.Popup
         public void Use(string text, Action<string> onConfirmAction, Action onExit, Action onStartEdit, int maxInputChars, Sprite image, bool blockRaycasts = true)
         {
             action = onConfirmAction;
-            startEdit = new PopupAction(onStartEdit, null);
-            exit = new PopupAction(onExit, null);
+            startEdit = onStartEdit;
+            exit = onExit;
             SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
@@ -106,7 +106,7 @@ namespace Pospec.Popup
 
         private void ExitPopup()
         {
-            exit.OnClick();
+            exit?.Invoke();
             Close();
         }
 

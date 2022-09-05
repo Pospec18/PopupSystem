@@ -28,5 +28,10 @@ namespace Pospec.Popup
             Callback = callback;
             Col = color;
         }
+
+        public void Invoke()
+        {
+
+        }
     }
 }

@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +12,8 @@ namespace Pospec.Popup
         [SerializeField] private PopupButton buttonPref;
         [SerializeField] private Transform buttonsPanel;
 
-        [SerializeField] private List<PopupAction> popupActions = new List<PopupAction>();
+        [SerializeField] private List<Action> popupActions = new List<Action>();
+        [SerializeField] private List<PopupButton> generatedButtons = new List<PopupButton>();
         private List<KeyCode> confirmKeyCodes = new List<KeyCode>();
 
         #region Use Popup
@@ -69,12 +70,13 @@ namespace Pospec.Popup
 
         private void Generate(PopupButtonOption option, int i)
         {
+            popupActions.Add(option.Callback);
             PopupButton popupButton = Instantiate(buttonPref, buttonsPanel);
+            generatedButtons.Add(popupButton);
             popupButton.textField.text = option.Name;
-            popupButton.button.onClick.AddListener(delegate { OnButtonClick(i); });
+            popupButton.button.onClick.AddListener(() => InvokeCallback(i));
             if (option.Col != null)
                 popupButton.textField.color = (Color)option.Col;
-            popupActions.Add(new PopupAction(option, popupButton.button));
         }
 
         private void Update()
@@ -84,16 +86,17 @@ namespace Pospec.Popup
 
             foreach (KeyCode key in confirmKeyCodes)
                 if (Input.GetKeyDown(key))
-                    OnButtonClick(0);
+                    InvokeCallback(0);
         }
 
         protected override void ResetPopup()
         {
             base.ResetPopup();
-            foreach (var item in popupActions)
+            foreach (var item in generatedButtons)
             {
-                Destroy(item.Button);
+                Destroy(item.gameObject);
             }
+            generatedButtons.Clear();
             popupActions.Clear();
         }
 
@@ -101,9 +104,9 @@ namespace Pospec.Popup
         /// OnClick of PopupButton
         /// </summary>
         /// <param name="index">Index in popupActions list</param>
-        private void OnButtonClick(int index)
+        private void InvokeCallback(int index)
         {
-            popupActions[index].OnClick();
+            popupActions[index]?.Invoke();
             Close();
         }
     }

@@ -48,35 +48,5 @@ namespace Pospec.Popup
         {
 
         }
-
-        protected class PopupAction
-        {
-            public Action Callback { get; set; }
-            public Button Button { get; set; }
-
-            public PopupAction(Action action, Button button)
-            {
-                Callback = action;
-                Button = button;
-            }
-
-            public PopupAction(PopupButtonOption option, Button button)
-            {
-                if (option == null)
-                    Callback = null;
-                else
-                    Callback = option.Callback;
-
-                Button = button;
-            }
-
-            /// <summary>
-            /// Triggers Action
-            /// </summary>
-            public void OnClick()
-            {
-                Callback?.Invoke();
-            }
-        }
     }
 }
