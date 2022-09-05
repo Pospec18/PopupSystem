@@ -12,7 +12,7 @@ namespace Pospec.Popup
         private const int defaultTime = 2;
 
         [SerializeField] private Button closeButton;
-        
+
         private Coroutine closeCoroutine;
 
         private void Start()

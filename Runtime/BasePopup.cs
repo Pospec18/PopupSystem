@@ -49,83 +49,34 @@ namespace Pospec.Popup
 
         }
 
-        #region Popup Actions
-
-        /// <summary>
-        /// Abstract class holding Button with its OnClick Action
-        /// </summary>
-        protected interface IPopupAction
+        protected class PopupAction
         {
+            public Action Callback { get; set; }
+            public Button Button { get; set; }
+
+            public PopupAction(Action action, Button button)
+            {
+                Callback = action;
+                Button = button;
+            }
+
+            public PopupAction(PopupButtonOption option, Button button)
+            {
+                if (option == null)
+                    Callback = null;
+                else
+                    Callback = option.Callback;
+
+                Button = button;
+            }
+
             /// <summary>
             /// Triggers Action
             /// </summary>
-            void OnClick();
-
-            GameObject Button { get; set; }
-        }
-
-        protected class PopupAction : IPopupAction
-        {
-            public Action action;
-            public GameObject Button { get; set; }
-
-            public PopupAction(Action _action, GameObject _button)
-            {
-                action = _action;
-                Button = _button;
-            }
-
-            public PopupAction(PopupOption _option, GameObject _button)
-            {
-                if (_option == null)
-                    action = null;
-                else
-                    action = _option.action;
-
-                Button = _button;
-            }
-
             public void OnClick()
             {
-                action?.Invoke();
+                Callback?.Invoke();
             }
         }
-
-        protected class PopupAction<T> : IPopupAction
-        {
-            public Action<T> action;
-            public T value;
-            public GameObject Button { get; set; }
-
-            public PopupAction(Action<T> _action, T _value, GameObject _button)
-            {
-                action = _action;
-                value = _value;
-                Button = _button;
-            }
-
-            public PopupAction(PopupOption<T> _option, GameObject _button)
-            {
-                if (_option == null)
-                {
-                    action = null;
-                    value = default(T);
-                }
-                else
-                {
-                    action = _option.action;
-                    value = _option.value;
-                }
-
-                Button = _button;
-            }
-
-            public void OnClick()
-            {
-                action?.Invoke(value);
-            }
-        }
-
-        #endregion
     }
 }
