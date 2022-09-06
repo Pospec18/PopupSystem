@@ -106,8 +106,8 @@ namespace Pospec.Popup
         /// <param name="index">Index in popupActions list</param>
         private void InvokeCallback(int index)
         {
-            popupActions[index]?.Invoke();
             Close();
+            popupActions[index]?.Invoke();
         }
     }
 }

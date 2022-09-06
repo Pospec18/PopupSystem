@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -13,6 +13,8 @@ namespace Pospec.Popup
         [SerializeField] private TextMeshProUGUI textField;
         [SerializeField] private Image popupIMG;
         [SerializeField] private Image blockRaycastsIMG;
+
+        private List<Transform> activated = new List<Transform>();
 
         private bool _blockRaycasts = true;
         public bool BlockRaycasts
@@ -31,17 +33,34 @@ namespace Pospec.Popup
 
         public virtual void Close()
         {
-            ResetPopup();
-            gameObject.SetActive(false);
+            foreach (Transform item in activated)
+            {
+                item.gameObject.SetActive(false);
+            }
         }
 
         protected void SetupPopup(string text, Sprite image, bool blockRaycasts)
         {
-            gameObject.SetActive(true);
+            ResetPopup();
+            activated.Clear();
+            TunrActive(transform);
             textField.text = text;
             BlockRaycasts = blockRaycasts;
             if (popupIMG != null)
                 popupIMG.sprite = image;
+        }
+
+        private void TunrActive(Transform parent)
+        {
+            if (parent == null)
+                return;
+
+            if(!parent.gameObject.activeInHierarchy)
+            {
+                activated.Add(parent);
+                parent.gameObject.SetActive(true);
+            }
+            TunrActive(parent.parent);
         }
 
         protected virtual void ResetPopup()

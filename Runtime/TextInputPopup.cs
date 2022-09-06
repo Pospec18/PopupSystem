@@ -84,10 +84,10 @@ namespace Pospec.Popup
         /// <param name="blockRaycasts">Set if block Raycasts outside popup</param>
         public void Use(string text, Action<string> onConfirmAction, Action onExit, Action onStartEdit, int maxInputChars, Sprite image, bool blockRaycasts = true)
         {
+            SetGameObject(text, image, blockRaycasts, maxInputChars);
             action = onConfirmAction;
             startEdit = onStartEdit;
             exit = onExit;
-            SetGameObject(text, image, blockRaycasts, maxInputChars);
         }
 
         #endregion
@@ -100,14 +100,14 @@ namespace Pospec.Popup
 
         private void Confirm(string text)
         {
-            action?.Invoke(text);
             Close();
+            action?.Invoke(text);
         }
 
         private void ExitPopup()
         {
-            exit?.Invoke();
             Close();
+            exit?.Invoke();
         }
 
         protected override void ResetPopup()
