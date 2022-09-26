@@ -8,5 +8,11 @@ namespace Pospec.Popup
     {
         public TextMeshProUGUI textField;
         public Button button;
+
+        private void Reset()
+        {
+            textField = GetComponentInChildren<TextMeshProUGUI>();
+            button = GetComponentInChildren<Button>();
+        }
     }
 }

@@ -117,5 +117,11 @@ namespace Pospec.Popup
             startEdit = null;
             exit = null;
         }
+
+        protected override void Reset()
+        {
+            base.Reset();
+            inputField = GetComponentInChildren<TMP_InputField>();
+        }
     }
 }

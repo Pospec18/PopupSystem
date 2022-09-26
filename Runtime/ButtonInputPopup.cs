@@ -12,8 +12,8 @@ namespace Pospec.Popup
         [SerializeField] private PopupButton buttonPref;
         [SerializeField] private Transform buttonsPanel;
 
-        [SerializeField] private List<Action> popupActions = new List<Action>();
-        [SerializeField] private List<PopupButton> generatedButtons = new List<PopupButton>();
+        private List<Action> popupActions = new List<Action>();
+        private List<PopupButton> generatedButtons = new List<PopupButton>();
         private List<KeyCode> confirmKeyCodes = new List<KeyCode>();
 
         #region Use Popup

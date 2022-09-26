@@ -10,8 +10,11 @@ namespace Pospec.Popup
     /// </summary>
     public abstract class BasePopup : MonoBehaviour
     {
+        [Tooltip("Main info text of popup")]
         [SerializeField] private TextMeshProUGUI textField;
+        [Tooltip("Optional image to display")]
         [SerializeField] private Image popupIMG;
+        [Tooltip("Image for blocking raycasts outside popup")]
         [SerializeField] private Image blockRaycastsIMG;
 
         private List<Transform> activated = new List<Transform>();
@@ -43,14 +46,14 @@ namespace Pospec.Popup
         {
             ResetPopup();
             activated.Clear();
-            TunrActive(transform);
+            TurnActive(transform);
             textField.text = text;
             BlockRaycasts = blockRaycasts;
             if (popupIMG != null)
                 popupIMG.sprite = image;
         }
 
-        private void TunrActive(Transform parent)
+        private void TurnActive(Transform parent)
         {
             if (parent == null)
                 return;
@@ -60,12 +63,17 @@ namespace Pospec.Popup
                 activated.Add(parent);
                 parent.gameObject.SetActive(true);
             }
-            TunrActive(parent.parent);
+            TurnActive(parent.parent);
         }
 
         protected virtual void ResetPopup()
         {
 
+        }
+
+        protected virtual void Reset()
+        {
+            textField = GetComponentInChildren<TextMeshProUGUI>();
         }
     }
 }
