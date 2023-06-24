@@ -44,6 +44,7 @@ namespace Pospec.Popup
 
         protected void SetupPopup(string text, Sprite image, bool blockRaycasts)
         {
+            Close();
             ResetPopup();
             activated.Clear();
             TurnActive(transform);

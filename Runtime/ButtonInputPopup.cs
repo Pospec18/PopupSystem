@@ -70,6 +70,11 @@ namespace Pospec.Popup
 
         private void Generate(PopupButtonOption option, int i)
         {
+            if (option == null)
+            {
+                popupActions.Add(null);
+                return;
+            }
             popupActions.Add(option.Callback);
             PopupButton popupButton = Instantiate(buttonPref, buttonsPanel);
             generatedButtons.Add(popupButton);
