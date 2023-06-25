@@ -9,21 +9,22 @@ namespace Pospec.Popup
 
         private interface ISearchNode
         {
-            IEnumerable<T> GetValues(string key);
-            void Add(string key, T value);
+            IEnumerable<SearchResult<T>> GetValues(string key);
+            void Add(string key, SearchResult<T> value);
         }
 
         private class SearchNode : ISearchNode
         {
-            private readonly IList<KeyValuePair<string, T>> lines = new List<KeyValuePair<string, T>>();
+
+            private readonly IList<KeyValuePair<string, SearchResult<T>>> lines = new List<KeyValuePair<string, SearchResult<T>>>();
             private static readonly char[] escapeCharacters = { ':', '-' };
 
-            public IEnumerable<T> GetValues(string key)
+            public IEnumerable<SearchResult<T>> GetValues(string key)
             {
-                List<T> startOfLine = new List<T>();
-                List<T> startOfWord = new List<T>();
-                List<T> startOfSomething = new List<T>();
-                List<T> inMiddle = new List<T>();
+                List<SearchResult<T>> startOfLine = new List<SearchResult<T>>();
+                List<SearchResult<T>> startOfWord = new List<SearchResult<T>>();
+                List<SearchResult<T>> startOfSomething = new List<SearchResult<T>>();
+                List<SearchResult<T>> inMiddle = new List<SearchResult<T>>();
                 foreach (var line in lines)
                 {
                     if (!line.Key.EndsWith(key))
@@ -44,7 +45,7 @@ namespace Pospec.Popup
                 return startOfLine.Union(startOfWord).Union(startOfSomething).Union(inMiddle);
             }
 
-            public void Add(string key, T value)
+            public void Add(string key, SearchResult<T> value)
             {
                 lines.Add(KeyValuePair.Create(key, value));
             }
@@ -53,19 +54,32 @@ namespace Pospec.Popup
         public void Add(string key, T value)
         {
             string keyLower = key.ToLower();
+            SearchResult<T> searchValue = new SearchResult<T>(key, value);
             for (int i = 0; i < keyLower.Length; i++)
             {
                 items.TryAdd(keyLower[i], new SearchNode());
-                items[keyLower[i]].Add(keyLower.Substring(0, i + 1), value);
+                items[keyLower[i]].Add(keyLower.Substring(0, i + 1), searchValue);
             }
         }
 
-        public IEnumerable<T> Find(string key)
+        public IEnumerable<SearchResult<T>> Find(string key)
         {
             string keyLower = key.ToLower();
             if (items.TryGetValue(keyLower[keyLower.Length - 1], out ISearchNode node))
                 return node.GetValues(keyLower);
             return null;
+        }
+    }
+
+    public class SearchResult<T>
+    {
+        public string Key { get; private set; }
+        public T Value { get; private set; }
+
+        public SearchResult(string key, T value)
+        {
+            Key = key;
+            Value = value;
         }
     }
 }
